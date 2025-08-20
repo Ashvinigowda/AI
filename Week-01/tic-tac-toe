@@ -1,0 +1,100 @@
+# Tic Tac Toe using Magic Square Method
+
+# Magic square values assigned to the 3x3 board
+magic_square = [
+    [8, 1, 6],
+    [3, 5, 7],
+    [4, 9, 2]
+]
+
+# Initialize the Tic Tac Toe board
+board = [[" " for _ in range(3)] for _ in range(3)]
+
+# Stores the magic numbers chosen by each player
+player_X_moves = []
+player_O_moves = []
+
+
+def print_board():
+    """Prints the current Tic Tac Toe board."""
+    print("\nCurrent Board:")
+    for row in board:
+        print(" | ".join(row))
+        print("-" * 5)
+
+
+def is_winner(moves):
+    """Checks if a player has won using magic square sums."""
+    n = len(moves)
+    if n < 3:
+        return False
+    # Check all combinations of 3 moves
+    from itertools import combinations
+    for combo in combinations(moves, 3):
+        if sum(combo) == 15:  # Magic square property: any winning line sums to 15
+            return True
+    return False
+
+
+def is_draw():
+    """Checks if the game is a draw."""
+    return all(board[i][j] != " " for i in range(3) for j in range(3))
+
+
+def get_magic_number(row, col):
+    """Returns the magic number corresponding to the board position."""
+    return magic_square[row][col]
+
+
+def play_game():
+    """Main function to play the game."""
+    current_player = "X"
+
+    while True:
+        print_board()
+        print(f"Player {current_player}'s turn")
+
+        try:
+            row = int(input("Enter row (0-2): "))
+            col = int(input("Enter column (0-2): "))
+        except ValueError:
+            print("Invalid input! Please enter numbers between 0 and 2.")
+            continue
+
+        # Validate move
+        if row not in range(3) or col not in range(3):
+            print("Invalid position! Choose values between 0 and 2.")
+            continue
+        if board[row][col] != " ":
+            print("Position already taken! Choose another.")
+            continue
+
+        # Place move
+        board[row][col] = current_player
+        magic_value = get_magic_number(row, col)
+
+        # Store player's magic number
+        if current_player == "X":
+            player_X_moves.append(magic_value)
+            if is_winner(player_X_moves):
+                print_board()
+                print("Player X wins!")
+                break
+            current_player = "O"
+        else:
+            player_O_moves.append(magic_value)
+            if is_winner(player_O_moves):
+                print_board()
+                print("Player O wins!")
+                break
+            current_player = "X"
+
+        # Check for draw
+        if is_draw():
+            print_board()
+            print("It's a draw!")
+            break
+
+
+# Start the game
+play_game()
