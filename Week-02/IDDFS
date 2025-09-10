@@ -1,0 +1,52 @@
+def dfs_limited(start, goal, graph, limit, path):
+    """Depth-Limited DFS"""
+    path.append(start)
+
+    if start == goal:
+        return path
+    if limit <= 0:
+        path.pop()
+        return None
+
+    for neighbor in graph.get(start, []):
+        if neighbor not in path:  # avoid cycles
+            result = dfs_limited(neighbor, goal, graph, limit - 1, path)
+            if result:
+                return result
+
+    path.pop()
+    return None
+
+
+def iddfs(start, goal, graph, max_depth):
+    """Iterative Deepening DFS"""
+    for depth in range(max_depth + 1):
+        print(f"\nSearching at depth {depth}...")
+        path = dfs_limited(start, goal, graph, depth, [])
+        if path:
+            return path
+    return None
+
+
+# ----------------- USER INPUT -----------------
+graph = {}
+n = int(input("Enter number of edges in the graph: "))
+
+print("Enter edges in format: source destination")
+for _ in range(n):
+    u, v = input().split()
+    if u not in graph:
+        graph[u] = []
+    graph[u].append(v)
+
+start = input("Enter start node: ")
+goal = input("Enter goal node: ")
+max_depth = int(input("Enter maximum depth to search: "))
+
+# ----------------- RUN SEARCH -----------------
+path = iddfs(start, goal, graph, max_depth)
+
+if path:
+    print("\nGoal found! Path:", " -> ".join(path))
+else:
+    print("\nGoal not found within depth limit")
